@@ -55,3 +55,7 @@ func (bg *BackgroundCurtainStraight) Draw(screen *ebiten.Image) error {
 
 	return nil
 }
+
+func (bg *BackgroundCurtainStraight) Update() error {
+	return nil
+}

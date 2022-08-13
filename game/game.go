@@ -22,6 +22,9 @@ func NewGame() *Game {
 }
 
 func (g *Game) Update() error {
+	for _, obj := range g.objects {
+		obj.Update()
+	}
 	return nil
 }
 

@@ -57,3 +57,7 @@ func (bg *BackgroundDesk) Draw(screen *ebiten.Image) error {
 
 	return nil
 }
+
+func (bg *BackgroundDesk) Update() error {
+	return nil
+}

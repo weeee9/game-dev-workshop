@@ -58,3 +58,7 @@ func (bg *BackgroundGrass) Draw(screen *ebiten.Image) error {
 
 	return nil
 }
+
+func (bg *BackgroundGrass) Update() error {
+	return nil
+}
