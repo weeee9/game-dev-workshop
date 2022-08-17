@@ -11,98 +11,107 @@ import (
 )
 
 type BackgroundWater struct {
-	tick   int
-	waters []Object
+	water *water
 }
 
-func NewBackgroundWater(imgs ...*ebiten.Image) Object {
-
-	waters := make([]Object, len(imgs))
-	for i, img := range imgs {
-		waters[i] = NewWater(img)
-	}
-
+func NewBackgroundWater(img *ebiten.Image) Object {
 	return &BackgroundWater{
-		waters: waters,
+		water: NewWater(img),
 	}
 }
 
 func NewDefaultBackgroundWater() Object {
-	water1, _, err := image.Decode(bytes.NewReader(bgWater1))
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	water2, _, err := image.Decode(bytes.NewReader(bgWater2))
+	waterImg, _, err := image.Decode(bytes.NewReader(bgWater1))
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	return NewBackgroundWater(
-		ebiten.NewImageFromImage(water1),
-		ebiten.NewImageFromImage(water2),
+		ebiten.NewImageFromImage(waterImg),
 	)
 }
 
 func (bg *BackgroundWater) Draw(screen *ebiten.Image) error {
-	frameCount := len(bg.waters)
-
-	if frameCount == 0 {
-		return nil
-	}
-
-	i := (bg.tick / 20) % frameCount
-
-	bg.waters[i].Draw(screen)
+	bg.water.Draw(screen)
 
 	return nil
 }
 
 func (bg *BackgroundWater) Update() error {
-	bg.tick++
+	bg.water.Update()
 	return nil
 }
+
+const (
+	defaultWaterSpeed = 7
+)
 
 var (
 	//go:embed images/water1.png
 	bgWater1 []byte
-
-	//go:embed images/water2.png
-	bgWater2 []byte
 )
 
 type water struct {
+	tick  int
+	speed int
+
 	img    *ebiten.Image
 	width  int
 	height int
+
+	dy         int
+	xDirection int
+	yDirection int
 }
 
 func NewWater(img *ebiten.Image) *water {
 	width, height := img.Size()
 
 	return &water{
+		tick:   0,
+		speed:  defaultWaterSpeed,
 		img:    img,
 		width:  width,
 		height: height,
+
+		dy:         0,
+		xDirection: 1,
+		yDirection: 1,
 	}
 }
 
 func (w *water) Update() error {
+	w.tick++
 	return nil
 }
+
+const (
+	step = 2
+)
 
 func (w *water) Draw(screen *ebiten.Image) error {
 	screenWidth, screenHeight := screen.Size()
 
 	colNum := (screenWidth / w.width) + 1
 
+	sy := screenHeight - (w.height)
+
+	if w.dy == -20 || w.dy == 20 {
+		w.yDirection *= -1
+	}
+
+	if w.tick%w.speed == 0 {
+		w.dy += (step * w.yDirection)
+	}
+
 	for x := 0; x < colNum; x++ {
 		opt := &ebiten.DrawImageOptions{}
 
 		sx := x * w.width
-		sy := screenHeight - (w.height)
-		opt.GeoM.Translate(float64(sx), float64(sy))
+
+		opt.GeoM.Translate(float64(sx), float64(sy+w.dy))
 		screen.DrawImage(w.img, opt)
 	}
+
 	return nil
 }
