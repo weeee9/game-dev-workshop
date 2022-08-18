@@ -3,11 +3,13 @@ package object
 import (
 	"bytes"
 	_ "embed"
+	"fmt"
 	"image"
 	_ "image/png"
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
 type BackgroundWater struct {
@@ -52,16 +54,16 @@ var (
 )
 
 type water struct {
-	tick  int
-	speed int
+	tick int
 
 	img    *ebiten.Image
 	width  int
 	height int
 
+	dx         int
 	dy         int
-	xDirection int
-	yDirection int
+	xDirection moveDirection
+	yDirection moveDirection
 }
 
 func NewWater(img *ebiten.Image) *water {
@@ -69,24 +71,36 @@ func NewWater(img *ebiten.Image) *water {
 
 	return &water{
 		tick:   0,
-		speed:  defaultWaterSpeed,
 		img:    img,
 		width:  width,
 		height: height,
 
-		dy:         0,
-		xDirection: 1,
-		yDirection: 1,
+		xDirection: directionUpOrRight,
+		yDirection: directionUpOrRight,
 	}
 }
 
 func (w *water) Update() error {
+	if w.tick > 100 {
+		w.tick = 0
+	}
 	w.tick++
 	return nil
 }
 
 const (
-	step = 2
+	xStep = 5
+	yStep = 2
+
+	xSpeed = 5
+	ySpeed = 10
+)
+
+type moveDirection int
+
+const (
+	directionUpOrRight  moveDirection = 1
+	directionDownOrLeft moveDirection = -1
 )
 
 func (w *water) Draw(screen *ebiten.Image) error {
@@ -96,22 +110,36 @@ func (w *water) Draw(screen *ebiten.Image) error {
 
 	sy := screenHeight - (w.height)
 
-	if w.dy == -20 || w.dy == 20 {
-		w.yDirection *= -1
+	switch {
+	case w.dy >= 20 && w.yDirection == directionUpOrRight:
+		w.yDirection = directionDownOrLeft
+	case w.dy <= -20 && w.yDirection == directionDownOrLeft:
+		w.yDirection = directionUpOrRight
+
+	case w.dx >= 50 && w.xDirection == directionUpOrRight:
+		w.xDirection = directionDownOrLeft
+	case w.dx <= -50 && w.xDirection == directionDownOrLeft:
+		w.xDirection = directionUpOrRight
 	}
 
-	if w.tick%w.speed == 0 {
-		w.dy += (step * w.yDirection)
+	if w.tick%ySpeed == 0 {
+		w.dy += (yStep * int(w.yDirection))
 	}
 
-	for x := 0; x < colNum; x++ {
+	if w.tick%xSpeed == 0 {
+		w.dx += (xStep * int(w.xDirection))
+	}
+
+	for x := -1; x < colNum+2; x++ {
 		opt := &ebiten.DrawImageOptions{}
 
 		sx := x * w.width
 
-		opt.GeoM.Translate(float64(sx), float64(sy+w.dy))
+		opt.GeoM.Translate(float64(sx+w.dx), float64(sy+w.dy))
 		screen.DrawImage(w.img, opt)
 	}
+
+	ebitenutil.DebugPrint(screen, fmt.Sprintf("tick: %d\n x:%d, dir: %d\n y:%d, dir: %d", w.tick, w.dx, w.xDirection, w.dy, w.yDirection))
 
 	return nil
 }
