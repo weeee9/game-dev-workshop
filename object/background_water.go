@@ -44,10 +44,6 @@ func (bg *BackgroundWater) Update() error {
 	return nil
 }
 
-const (
-	defaultWaterSpeed = 7
-)
-
 var (
 	//go:embed images/water1.png
 	bgWater1 []byte
@@ -85,6 +81,10 @@ func (w *water) Update() error {
 		w.tick = 0
 	}
 	w.tick++
+
+	w.updateDirection()
+	w.updateDxDy()
+
 	return nil
 }
 
@@ -110,26 +110,6 @@ func (w *water) Draw(screen *ebiten.Image) error {
 
 	sy := screenHeight - (w.height)
 
-	switch {
-	case w.dy >= 20 && w.yDirection == directionUpOrRight:
-		w.yDirection = directionDownOrLeft
-	case w.dy <= -20 && w.yDirection == directionDownOrLeft:
-		w.yDirection = directionUpOrRight
-
-	case w.dx >= 50 && w.xDirection == directionUpOrRight:
-		w.xDirection = directionDownOrLeft
-	case w.dx <= -50 && w.xDirection == directionDownOrLeft:
-		w.xDirection = directionUpOrRight
-	}
-
-	if w.tick%ySpeed == 0 {
-		w.dy += (yStep * int(w.yDirection))
-	}
-
-	if w.tick%xSpeed == 0 {
-		w.dx += (xStep * int(w.xDirection))
-	}
-
 	for x := -1; x < colNum+2; x++ {
 		opt := &ebiten.DrawImageOptions{}
 
@@ -142,4 +122,28 @@ func (w *water) Draw(screen *ebiten.Image) error {
 	ebitenutil.DebugPrint(screen, fmt.Sprintf("tick: %d\n x:%d, dir: %d\n y:%d, dir: %d", w.tick, w.dx, w.xDirection, w.dy, w.yDirection))
 
 	return nil
+}
+
+func (w *water) updateDirection() {
+	switch {
+	case w.dy >= 20 && w.yDirection == directionUpOrRight:
+		w.yDirection = directionDownOrLeft
+	case w.dy <= -20 && w.yDirection == directionDownOrLeft:
+		w.yDirection = directionUpOrRight
+
+	case w.dx >= 50 && w.xDirection == directionUpOrRight:
+		w.xDirection = directionDownOrLeft
+	case w.dx <= -50 && w.xDirection == directionDownOrLeft:
+		w.xDirection = directionUpOrRight
+	}
+}
+
+func (w *water) updateDxDy() {
+	if w.tick%ySpeed == 0 {
+		w.dy += (yStep * int(w.yDirection))
+	}
+
+	if w.tick%xSpeed == 0 {
+		w.dx += (xStep * int(w.xDirection))
+	}
 }
