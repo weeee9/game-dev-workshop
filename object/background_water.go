@@ -3,13 +3,11 @@ package object
 import (
 	"bytes"
 	_ "embed"
-	"fmt"
 	"image"
 	_ "image/png"
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
 type BackgroundWater struct {
@@ -119,16 +117,14 @@ func (w *water) Draw(screen *ebiten.Image) error {
 		screen.DrawImage(w.img, opt)
 	}
 
-	ebitenutil.DebugPrint(screen, fmt.Sprintf("tick: %d\n x:%d, dir: %d\n y:%d, dir: %d", w.tick, w.dx, w.xDirection, w.dy, w.yDirection))
-
 	return nil
 }
 
 func (w *water) updateDirection() {
 	switch {
-	case w.dy >= 20 && w.yDirection == directionUpOrRight:
+	case w.dy >= 10 && w.yDirection == directionUpOrRight:
 		w.yDirection = directionDownOrLeft
-	case w.dy <= -20 && w.yDirection == directionDownOrLeft:
+	case w.dy <= -10 && w.yDirection == directionDownOrLeft:
 		w.yDirection = directionUpOrRight
 
 	case w.dx >= 50 && w.xDirection == directionUpOrRight:
