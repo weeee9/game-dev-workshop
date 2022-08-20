@@ -9,6 +9,10 @@ type Game struct {
 	objects []object.Object
 }
 
+func (g Game) Title() string {
+	return "Game Dev Workshop"
+}
+
 func NewGame() *Game {
 	return &Game{
 		objects: []object.Object{

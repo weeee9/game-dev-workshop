@@ -8,7 +8,11 @@ import (
 )
 
 func main() {
-	if err := ebiten.RunGame(game.NewGame()); err != nil {
+	g := game.NewGame()
+
+	ebiten.SetWindowTitle(g.Title())
+
+	if err := ebiten.RunGame(g); err != nil {
 		log.Fatal(err)
 	}
 }
