@@ -17,7 +17,7 @@ func NewGame() *Game {
 	return &Game{
 		objects: []object.Object{
 			object.NewDefaultBackgroundGrass(),
-			object.NewDefaultDuck(),
+			object.NewDefaultShootingTargets(),
 			object.NewDefaultBackgroundWater(),
 			object.NewDefaultBackgroundDesk(),
 			object.NewDefaultBackgroundCurtain(),
