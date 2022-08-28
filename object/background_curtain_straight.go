@@ -59,3 +59,7 @@ func (bg *BackgroundCurtainStraight) Draw(screen *ebiten.Image) error {
 func (bg *BackgroundCurtainStraight) Update() error {
 	return nil
 }
+
+func (bg *BackgroundCurtainStraight) OnScreen() bool {
+	return true
+}

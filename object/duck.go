@@ -28,6 +28,8 @@ type Duck struct {
 	dy         int
 	xDirection moveDirection
 	yDirection moveDirection
+
+	remove bool
 }
 
 func NewDuck(img *ebiten.Image) Object {
@@ -85,7 +87,35 @@ func (duck *Duck) Update() error {
 	duck.updateDirection()
 	duck.updateDxDy()
 
+	duck.shoot(ebiten.CursorPosition())
+
 	return nil
+}
+
+func (duck *Duck) OnScreen() bool {
+	return !duck.remove
+}
+
+func (duck *Duck) shoot(clickX, clickY int) bool {
+	x := int(duck.dx)
+	y := int(duck.dy)
+
+	log.Printf("duck x: %d, x2 %d, y: %d, y2: %d | clickX: %d, clickY: %d",
+		x, x+duck.width,
+		y, y+duck.height,
+		clickX, clickY)
+
+	// Approximate the duck to its rectangle, though there're transparent
+	// pixels. For better results we can either approximate the duck to other
+	// shapes (like a rectangle+circle) or use image.At() to understand
+	// if a transparent pixel was hit
+	if (clickX >= x && clickX <= x+duck.width) &&
+		(clickY >= y && clickY <= y+duck.height) {
+		duck.remove = true
+		return true
+	}
+
+	return false
 }
 
 func (duck *Duck) updateDirection() {

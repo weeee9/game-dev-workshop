@@ -42,6 +42,10 @@ func (bg *BackgroundWater) Update() error {
 	return nil
 }
 
+func (bg *BackgroundWater) OnScreen() bool {
+	return true
+}
+
 var (
 	//go:embed images/water1.png
 	bgWater1 []byte
@@ -72,6 +76,10 @@ func NewWater(img *ebiten.Image) *water {
 		xDirection: directionUpOrRight,
 		yDirection: directionUpOrRight,
 	}
+}
+
+func (w *water) OnScreen() bool {
+	return true
 }
 
 func (w *water) Update() error {

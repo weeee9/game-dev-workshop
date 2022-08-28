@@ -62,3 +62,7 @@ func (bg *BackgroundGrass) Draw(screen *ebiten.Image) error {
 func (bg *BackgroundGrass) Update() error {
 	return nil
 }
+
+func (bg *BackgroundGrass) OnScreen() bool {
+	return true
+}

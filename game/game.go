@@ -1,12 +1,19 @@
 package game
 
 import (
+	"time"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/weeee9/game-dev-workshop/object"
 )
 
+const (
+	debouncer = 100 * time.Millisecond
+)
+
 type Game struct {
-	objects []object.Object
+	objects     []object.Object
+	lastClickAt time.Time
 }
 
 func (g Game) Title() string {
@@ -22,6 +29,7 @@ func NewGame() *Game {
 			object.NewDefaultBackgroundDesk(),
 			object.NewDefaultBackgroundCurtain(),
 			object.NewDefaultBackgroundCurtainStraight(),
+			object.NewDefaultCrosshair(),
 		},
 	}
 }

@@ -31,7 +31,12 @@ func (st *ShootingTargets) Update() error {
 		st.ducks = append(st.ducks, NewDefaultDuck())
 	}
 
-	for _, duck := range st.ducks {
+	for i, duck := range st.ducks {
+		if !duck.OnScreen() {
+			st.ducks = append(st.ducks[:i], st.ducks[i+1:]...)
+			continue
+		}
+
 		duck.Update()
 	}
 	return nil
@@ -42,6 +47,10 @@ func (st *ShootingTargets) Draw(screen *ebiten.Image) error {
 		duck.Draw(screen)
 	}
 	return nil
+}
+
+func (st *ShootingTargets) OnScreen() bool {
+	return true
 }
 
 func (st *ShootingTargets) canAddDuck() bool {

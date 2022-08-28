@@ -61,3 +61,7 @@ func (bg *BackgroundDesk) Draw(screen *ebiten.Image) error {
 func (bg *BackgroundDesk) Update() error {
 	return nil
 }
+
+func (bg *BackgroundDesk) OnScreen() bool {
+	return true
+}
