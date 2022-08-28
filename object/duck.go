@@ -87,7 +87,9 @@ func (duck *Duck) Update() error {
 	duck.updateDirection()
 	duck.updateDxDy()
 
-	duck.shoot(ebiten.CursorPosition())
+	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+		duck.shoot(ebiten.CursorPosition())
+	}
 
 	return nil
 }
@@ -98,7 +100,7 @@ func (duck *Duck) OnScreen() bool {
 
 func (duck *Duck) shoot(clickX, clickY int) bool {
 	x := int(duck.dx)
-	y := int(duck.dy)
+	y := int(duck.dy) + (3 * duck.height)
 
 	log.Printf("duck x: %d, x2 %d, y: %d, y2: %d | clickX: %d, clickY: %d",
 		x, x+duck.width,
